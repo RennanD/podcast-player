@@ -74,7 +74,7 @@ export function Player() {
         </Header.Root>
       </Box>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Center mt={8}>
           <Image 
             w="full"
