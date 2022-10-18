@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { Platform, TouchableOpacity } from "react-native";
-import { Feather } from '@expo/vector-icons';
+
 import { Box, Center, Heading, Icon } from "native-base";
+import { IconButton } from "./IconButton";
 
 
 interface HeaderRootProps {
@@ -30,18 +31,13 @@ function HeaderTitle({ children }: HeaderTitleProps) {
 
 export function HeaderBackButton() {
   return (
-    <TouchableOpacity 
+    <IconButton 
+      name="arrow-left" 
       style={{ 
         position: 'absolute', 
         top: Platform.OS === 'android' ? 32 : 48,
-      }}>
-      <Icon 
-        as={Feather}
-        name="chevron-left"
-        size="lg"
-        color="white"
-      />
-    </TouchableOpacity>
+      }} 
+    />
   )
 }
 
