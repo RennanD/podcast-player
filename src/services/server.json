@@ -1,0 +1,24 @@
+{
+  "episodes": [
+    {
+      "id": "1",
+      "title": "FalaDev #21 - Estratégias de autenticação, JWT, OAuth, qual usar?",
+      "thumbnail": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/autenticacao.jpg",
+      "description": "Três programadores conversam sobre estratégia de autenticação. Vamos discutir quais aspectos você deve considerar na hora de fazer a sua escolha. A gente passa a maior parte do tempo escrevendo código. Agora chegou o momento de falar sobre isso.",
+      "file": {
+        "url": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/audios/autenticacao.m4a",
+        "duration": 1463
+      }
+    },
+    {
+      "id": "2",
+      "title": "FalaDev #22 - TypeScript vale a pena? JavaScript perde sentido?",
+      "description": "Três programadores conversam sobre TypeScript. Vamos discutir a usabilidade e as previsões da linguagem no cenário da programação. A gente passa a maior parte do tempo escrevendo código. Agora chegou o momento de falar sobre isso.",
+      "thumbnail": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/typescript.jpg",
+      "file": {
+        "url": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/audios/typescript.m4a",
+        "duration": 1772
+      }
+    }
+  ]
+}
