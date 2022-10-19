@@ -16,29 +16,42 @@ import { IconButton } from '../components/IconButton';
 import { useEffect, useState } from 'react';
 import { PlayEpisodeButton } from '../components/PlayEpisodeButton';
 import { ControllEpisodeButton, PlayStatus } from '../components/ControllEpisodeButton';
+import { convertDuration } from '../utils/convertDuration';
+import { Loading } from './Loading';
+import { Episode } from '../dtos/EpisodeDto';
+import { useRoute } from '@react-navigation/native';
 
+type RouteParams = {
+  episode: Episode
+}
+
+type StatusUpdateProps = {
+  positionMillis: number
+}
 
 export function Player() {
 
+  const route = useRoute();
+
+  const { episode } = route.params as RouteParams
+
+
   const [playingEpisode, setPlayingEpisode] = useState<Audio.Sound>({} as Audio.Sound);
   const [playStatus, setPlayStatus] = useState<PlayStatus>('stoped');
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [progressInSeconds, setProgressInSeconds] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(0);
 
-  async function handlePlayEpisode() {
-    try {
-      setIsLoading(true)
-      const { sound } = await Audio.Sound.createAsync({ uri: 'https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/audios/typescript.m4a' });
-      await sound.playAsync();
+  function convertProgress(progessInMillis: number) {
 
-      
-      setPlayingEpisode(sound);
-      setPlayStatus('playing');
+    const progressSeconds = (progessInMillis / 1000);
 
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
+    const convertedProgressPercent = (progressSeconds * 100) / episode.file.duration
+
+
+    setProgressInSeconds(Math.floor(progressSeconds))
+    setProgressPercent(convertedProgressPercent)
+  
   }
 
   async function handleContollPlayingEpisode() {
@@ -56,6 +69,35 @@ export function Player() {
   }
 
   useEffect(() => {
+    async function handlePlayEpisode() {
+      try {
+        setIsLoading(true)
+        const { sound } = await Audio.Sound.createAsync({ uri: episode.file.url });
+        await sound.playAsync();
+        
+        setPlayingEpisode(sound);
+        setPlayStatus('playing');
+  
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    handlePlayEpisode()
+  },[])
+
+  useEffect(() => {
+    if(playingEpisode._loaded) {
+      playingEpisode.setOnPlaybackStatusUpdate(statusUpdate => {
+        const { positionMillis } = statusUpdate as StatusUpdateProps;
+        convertProgress(positionMillis)
+      })
+    }
+  },[playingEpisode._loaded])
+
+  useEffect(() => {
     return playingEpisode._loaded
       ? () => {
           console.log('Unloading Sound');
@@ -64,8 +106,12 @@ export function Player() {
       : undefined;
   }, [playingEpisode]);
 
+  if( isLoading) {
+    return <Loading />
+  }
+
   return (
-    <VStack flex={1} bg="gray.700"  p={8}>
+    <VStack flex={1} bg="gray.700" p={8}>
 
       <Box pb={8}>
         <Header.Root>
@@ -77,9 +123,9 @@ export function Player() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Center mt={8}>
           <Image 
-            w="full"
-            h={80}
-            source={{ uri: 'https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/autenticacao.jpg' }}
+            w={64}
+            h={64}
+            source={{ uri: episode.thumbnail }}
             alt="Capa do podcast"
             rounded="md"
             resizeMode='cover'
@@ -87,27 +133,31 @@ export function Player() {
         </Center>
         
         <VStack mt={8}>
-          <Heading size="xs" color="gray.400" fontFamily="body" >
-            Três programadores conversam sobre estratégia de autenticação. Vamos discutir quais aspectos você deve considerar na hora de fazer a sua escolha. A gente passa a maior parte do tempo escrevendo código. 
-            Agora chegou o momento de falar sobre isso.
+          <Heading size="sm" mb={4} color="white" fontFamily="heading">
+            {episode.title}
           </Heading>
 
-          <VStack mt={8} w="full" h={1} bg="gray.600">
-            <VStack h={1} w={56} bg="white" />
+          <Text color="gray.400" fontFamily="body" mb={12}>
+            {episode.description}
+          </Text>
+
+          <VStack w="full" h={1} bg="gray.600">
+            <VStack style={{ width: `${progressPercent}%` }} h={1} bg="white" />
           </VStack>
 
           <HStack alignItems="center" mt={6} justifyContent="space-between">
-            <Text color="white" fontFamily="body">24:32</Text>
-            <Text color="white" fontFamily="body">34:00</Text>
+            <Text color="white" fontFamily="body">{convertDuration(progressInSeconds)}</Text>
+            <Text color="white" fontFamily="body">{convertDuration(episode.file.duration)}</Text>
           </HStack>
         </VStack>
 
         <HStack mt={12} alignItems="center" justifyContent="center" w="full">
           <IconButton name="chevron-left" size='xl' />
 
-          {playStatus === 'stoped' && !isLoading
-            ? <PlayEpisodeButton onPlay={handlePlayEpisode} isLoading={isLoading} /> 
-            : <ControllEpisodeButton onChangePlayState={handleContollPlayingEpisode} playStatus={playStatus} />}
+          <ControllEpisodeButton 
+            onChangePlayState={handleContollPlayingEpisode} 
+            playStatus={playStatus} 
+          />
 
           <IconButton name="chevron-right" size='xl' />
         </HStack>

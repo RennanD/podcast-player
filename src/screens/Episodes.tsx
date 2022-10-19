@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Box, FlatList, Heading, HStack, Image, VStack } from 'native-base';
 
@@ -5,14 +6,23 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Header } from '../components/Header';
 import { SearchInput } from '../components/SearchInput';
+import { Episode } from '../dtos/EpisodeDto';
+import { api } from '../services/api';
 
 export function Episodes() {
 
   const navigation = useNavigation();
+  const [episodes, setEpisodes] = useState<Episode[]>([])
 
-  function handleShowEpisode() {
-    navigation.navigate('player');
+  function handleShowEpisode(episode: Episode) {
+    navigation.navigate('player', { episode });
   }
+
+  useEffect(() => {
+    api.get('/episodes').then(response => {
+      setEpisodes(response.data)
+    })
+  },[])
 
   return (
     <VStack flex={1} bg="gray.700">
@@ -33,19 +43,19 @@ export function Episodes() {
 
       <Box>
         <FlatList 
-          data={[1, 2, 3, 4, 5]}
-          keyExtractor={item => String(item)}
+          data={episodes}
+          keyExtractor={item => String(item.id)}
           horizontal
           ml={8}
           showsHorizontalScrollIndicator={false}
           _contentContainerStyle={{
             pr: 32
           }}
-          renderItem={() => (
-            <TouchableOpacity onPress={() => handleShowEpisode()}>
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleShowEpisode(item)}>
               <VStack w={40} mr={3}>
                 <Image 
-                  source={{ uri: 'https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/typescript.jpg' }}
+                  source={{ uri: item.thumbnail }}
                   alt="Capa do podcast"
                   w={40}
                   h={40}
@@ -53,8 +63,8 @@ export function Episodes() {
                   resizeMode='cover'
                 />
 
-                <Heading color="white" size="xs" fontFamily="heading" numberOfLines={3}>
-                  Três programadores conversam sobre estratégia de autenticação. Vamos discutir quais aspectos você deve considerar na hora de fazer a sua escolha. A gente passa a maior parte do tempo escrevendo código. Agora chegou o momento de falar sobre isso.
+                <Heading mt={2} color="white" size="xs" fontFamily="heading" numberOfLines={3}>
+                  {item.title}
                 </Heading>
               </VStack>
             </TouchableOpacity>

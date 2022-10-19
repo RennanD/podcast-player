@@ -1,7 +1,10 @@
 import { ReactNode } from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
+
+import { useNavigation } from "@react-navigation/native";
 
 import { Box, Center, Heading, Icon } from "native-base";
+
 import { IconButton } from "./IconButton";
 
 
@@ -30,9 +33,17 @@ function HeaderTitle({ children }: HeaderTitleProps) {
 }
 
 export function HeaderBackButton() {
+
+  const { goBack } = useNavigation();
+
+  function handleGoBack() {
+    goBack();
+  }
+
   return (
     <IconButton 
-      name="arrow-left" 
+      name="arrow-left"
+      onPress={handleGoBack}
       style={{ 
         position: 'absolute', 
         top: Platform.OS === 'android' ? 32 : 48,

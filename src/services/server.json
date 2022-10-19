@@ -19,6 +19,16 @@
         "url": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/audios/typescript.m4a",
         "duration": 1772
       }
+    },
+    {
+      "id": "3",
+      "title": "Faladev #27 | Aplicação de arquiteturas MVC e CA na prática",
+      "description": "Diego Fernandes e Daniele Evangelista receberam Otávio Lemos e Rodrigo Branas para bater um papo sobre arquiteturas modernas de desenvolvimento, aplicadas na indústria da tecnologia. Quais são os fundamentos, os princípios e a importância de debater arquiteturas neste ecossistema?",
+      "thumbnail": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/clean.jpg",
+      "file": {
+        "url": "https://storage.googleapis.com/golden-wind/nextlevelweek/05-podcastr/audios/clean.m4a",
+        "duration": 5044
+      }
     }
   ]
 }
